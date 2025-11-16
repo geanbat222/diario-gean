@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Diário do Gean</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* ===== RESET BÁSICO ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f4f1ea;
+      --bg-card: #fbf8f3;
+      --border: #d6cfc0;
+      --ink: #262220;
+      --ink-soft: #6d635b;
+      --accent: #c3896b;
+      --accent-soft: #e3b59b;
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #f7f3eb 0%, #ece4d7 40%, #e4d9c8 100%);
+      color: var(--ink);
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 880px;
+      background: var(--bg);
+      border-radius: 18px;
+      border: 1px solid rgba(214, 207, 192, 0.9);
+      box-shadow: var(--shadow-soft);
+      padding: 26px 22px 22px;
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.2fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 780px) {
+      body {
+        padding: 18px 10px;
+      }
+      .page {
+        grid-template-columns: 1fr;
+        padding: 20px 16px 16px;
+      }
+    }
+
+    /* ===== CABEÇALHO ===== */
+    .header {
+      grid-column: 1 / -1;
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .title-block h1 {
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 28px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .title-block p {
+      font-size: 13px;
+      color: var(--ink-soft);
+    }
+
+    .date-pill {
+      font-size: 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      color: var(--ink-soft);
+      white-space: nowrap;
+    }
+
+    /* ===== COLUNA PRINCIPAL (ESQUERDA) ===== */
+    .section {
+      background: var(--bg-card);
+      border-radius: 14px;
+      border: 1px solid rgba(214, 207, 192, 0.9);
+      padding: 14px 14px 13px;
+      margin-bottom: 10px;
+    }
+
+    .section + .section {
+      margin-top: 4px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .section-title {
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .mood-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--accent-soft);
+      color: var(--accent);
+      background: rgba(227, 181, 155, 0.12);
+      white-space: nowrap;
+    }
+
+    .diary-entry {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--ink);
+      white-space: pre-line;
+    }
+
+    .diary-entry em {
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+
+    .divider {
+      border-top: 1px dashed rgba(214, 207, 192, 0.9);
+      margin: 10px 0;
+    }
+
+    .meta-line {
+      font-size: 11px;
+      color: var(--ink-soft);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .meta-line span {
+      white-space: nowrap;
+    }
+
+    /* ===== LISTAS ===== */
+    .list {
+      list-style: none;
+      font-size: 13px;
+      color: var(--ink);
+      display: grid;
+      gap: 6px;
+    }
+
+    .list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .list-bullet {
+      font-size: 10px;
+      margin-top: 3px;
+      color: var(--accent);
+    }
+
+    .list small {
+      display: block;
+      font-size: 11px;
+      color: var(--ink-soft);
+    }
+
+    /* ===== COLUNA LATERAL (DIREITA) ===== */
+    .side-section {
+      background: var(--bg-card);
+      border-radius: 14px;
+      border: 1px solid rgba(214, 207, 192, 0.9);
+      padding: 12px 12px 11px;
+      margin-bottom: 9px;
+    }
+
+    .side-title {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 9px;
+      font-family: "Georgia", "Times New Roman", serif;
+    }
+
+    .mood-big {
+      font-size: 22px;
+      font-family: "Georgia", "Times New Roman", serif;
+      margin-bottom: 2px;
+    }
+
+    .mood-caption {
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin-bottom: 10px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .chip {
+      font-size: 11px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      color: var(--ink-soft);
+    }
+
+    .quote {
+      font-size: 13px;
+      font-style: italic;
+      color: var(--ink-soft);
+      line-height: 1.5;
+      position: relative;
+      padding-left: 16px;
+    }
+
+    .quote::before {
+      content: "❝";
+      position: absolute;
+      left: 0;
+      top: -4px;
+      font-size: 18px;
+      color: var(--accent-soft);
+    }
+
+    .quote-author {
+      font-size: 11px;
+      color: var(--ink-soft);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .footer {
+      grid-column: 1 / -1;
+      margin-top: 4px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+      font-size: 11px;
+      color: var(--ink-soft);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    @media (max-width: 480px) {
+      .title-block h1 {
+        font-size: 22px;
+      }
+      .diary-entry {
+        font-size: 13px;
+      }
+      .side-section {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- CABEÇALHO -->
+    <header class="header">
+      <div class="title-block">
+        <h1>Diário do Gean</h1>
+        <p>Um espaço quieto pra organizar pensamentos, sentimentos e pequenas vitórias.</p>
+      </div>
+      <div class="date-pill">
+        <!-- Você pode trocar a data manualmente sempre que quiser -->
+        16 de novembro de 2025 · noite fria
+      </div>
+    </header>
+
+    <!-- COLUNA ESQUERDA: ENTRADAS DO DIÁRIO -->
+    <section>
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">entrada principal</h2>
+          <span class="mood-tag">hoje: um pouco cansado, mas em paz</span>
+        </div>
+        <div class="diary-entry">
+Hoje eu acordei com aquela sensação estranha de estar no meio do caminho: nem onde eu quero estar, nem mais o mesmo de antes.  
+Ao mesmo tempo, percebi que muita coisa mudou sem eu notar: minha disciplina, meu jeito de pensar, as pessoas que eu escolho ter por perto.
+
+Teve um momento do dia em que eu só quis ficar em silêncio, observando tudo.  
+<em>É engraçado como, às vezes, o que mais pesa não é o que falta fora, mas o que a gente sente por dentro.</em>
+
+Mesmo assim, tenho orgulho de não ter desistido de mim.
+        </div>
+        <div class="divider"></div>
+        <div class="meta-line">
+          <span>🎧 Trilha do dia: <em>coloque aqui a música que você ouviu</em></span>
+          <span>⏱︎ Horário: 23:14</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">rotina & corpo</h2>
+          <span class="mood-tag">cuidando de mim aos poucos</span>
+        </div>
+        <ul class="list">
+          <li>
+            <span class="list-bullet">✶</span>
+            <div>
+              Treino de hoje:
+              <strong>coloque aqui o treino (ex: pernas, peito, costas)</strong>
+              <small>Como eu me senti durante o treino? Mais focado? Cansado? Orgulhoso?</small>
+            </div>
+          </li>
+          <li>
+            <span class="list-bullet">✶</span>
+            <div>
+              Energia:
+              <strong>baixa · média · alta</strong>
+              <small>O que ajudou ou atrapalhou minha energia hoje?</small>
+            </div>
+          </li>
+          <li>
+            <span class="list-bullet">✶</span>
+            <div>
+              Sono:
+              <strong>horas dormidas: __</strong>
+              <small>Tenho cuidado de mim nas coisas básicas ou tô me esquecendo?</small>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">gratIdão discreta</h2>
+          <span class="mood-tag">3 coisas boas de hoje</span>
+        </div>
+        <ul class="list">
+          <li>
+            <span class="list-bullet">–</span>
+            <div>
+              <strong>Escreva aqui algo pequeno que te fez bem.</strong>
+              <small>Não precisa ser grande: um sorriso, uma mensagem, um momento.</small>
+            </div>
+          </li>
+          <li>
+            <span class="list-bullet">–</span>
+            <div>
+              <strong>Algo que você conquistou hoje, mesmo que pareça pouco.</strong>
+              <small>Ler algumas páginas, treinar, não desistir de um hábito.</small>
+            </div>
+          </li>
+          <li>
+            <span class="list-bullet">–</span>
+            <div>
+              <strong>Uma coisa sobre você que você valoriza.</strong>
+              <small>Lealdade, coragem, força, disciplina, coração bom.</small>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- COLUNA DIREITA: HUMOR, FRASE, OBJETIVOS -->
+    <aside>
+      <div class="side-section">
+        <h3 class="side-title">estado de espírito</h3>
+        <div class="mood-big">calmo · pensativo</div>
+        <p class="mood-caption">
+          Hoje eu me sinto assim. Não é o melhor dia do mundo, mas também não é o pior.  
+          Só um capítulo a mais da história.
+        </p>
+        <div class="chip-row">
+          <span class="chip">precisando de silêncio</span>
+          <span class="chip">cuidando da mente</span>
+          <span class="chip">respeitando meu tempo</span>
+        </div>
+      </div>
+
+      <div class="side-section">
+        <h3 class="side-title">frase que combina com hoje</h3>
+        <p class="quote">
+          Você ainda não está onde quer, mas já não é mais a pessoa que era quando começou.  
+          Isso também é vitória.
+        </p>
+        <div class="quote-author">— escreva aqui uma frase sua ou de alguém</div>
+      </div>
+
+      <div class="side-section">
+        <h3 class="side-title">coisas que quero lembrar</h3>
+        <ul class="list">
+          <li>
+            <span class="list-bullet">✧</span>
+            <div>Comparar minha jornada com a dos outros só rouba minha paz.</div>
+          </li>
+          <li>
+            <span class="list-bullet">✧</span>
+            <div>Posso recomeçar quantas vezes forem necessárias.</div>
+          </li>
+          <li>
+            <span class="list-bullet">✧</span>
+            <div>Eu mereço a vida que estou tentando construir.</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="side-section">
+        <h3 class="side-title">amanhã</h3>
+        <ul class="list">
+          <li>
+            <span class="list-bullet">›</span>
+            <div>Um hábito que quero manter.</div>
+          </li>
+          <li>
+            <span class="list-bullet">›</span>
+            <div>Uma coisa que não quero repetir.</div>
+          </li>
+          <li>
+            <span class="list-bullet">›</span>
+            <div>Uma coisa que quero fazer por mim.</div>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- RODAPÉ -->
+    <footer class="footer">
+      <span>Este diário é só pra mim. Não preciso postar nada pra que ele seja real.</span>
+      <span>Gean · versão 1.0</span>
+    </footer>
+  </div>
+</body>
+</html>
